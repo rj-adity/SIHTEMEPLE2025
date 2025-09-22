@@ -81,7 +81,7 @@ export default function Admin() {
   const peakHour = chart.filter(d => d.day === 0).reduce((a, b) => (a.v > b.v ? a : b)).t.split(" ")[1];
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] bg-[hsl(var(--dark-navy))] text-[hsl(var(--cream))]">
+    <div className="min-h-[calc(100vh-60px)] bg-[hsl(var(--dark-navy))] text-[hsl(var(--cream))]">
       <div className="mx-auto max-w-[1440px] px-6 md:px-10 lg:px-20 py-8 grid md:grid-cols-2 gap-6">
         {/* Left: Staff + Map */}
         <div className="space-y-4">
