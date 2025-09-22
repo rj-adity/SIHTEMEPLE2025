@@ -14,10 +14,56 @@ import {
   Area,
 } from "recharts";
 import { Progress } from "@/components/ui/progress";
-import { Car, MapPin } from "lucide-react";
+import { Car, MapPin, TicketPlus } from "lucide-react";
+import TicketPurchase, { readTickets, Ticket } from "@/components/tickets/TicketPurchase";
+import { toast } from "sonner";
 
 function classNames(...c: (string | false | undefined)[]) {
   return c.filter(Boolean).join(" ");
+}
+
+function PurchaseSection() {
+  const [open, setOpen] = useState(false);
+  const [tickets, setTickets] = useState<Ticket[]>(readTickets());
+  return (
+    <div className="bg-white/5 rounded-xl p-4 shadow border border-white/10">
+      <div className="flex items-center justify-between">
+        <div>
+          <h3 className="font-semibold">E‑Darshan Ticket</h3>
+          <div className="text-xs opacity-80 -mt-0.5">ઈ‑દર્શન ટિકિટ</div>
+        </div>
+        <button onClick={() => setOpen(true)} className="px-3 py-2 rounded-[12px] bg-[hsl(var(--gold))] text-[hsl(var(--royal))] font-semibold shadow hover:shadow-[0_0_16px_rgba(255,215,0,.45)] flex items-center gap-2">
+          <TicketPlus className="h-4 w-4" /> Purchase
+        </button>
+      </div>
+
+      {tickets.length > 0 && (
+        <div className="mt-3">
+          <div className="text-xs opacity-75 mb-1">My Tickets</div>
+          <ul className="space-y-2">
+            {tickets.slice(0, 3).map((t) => (
+              <li key={t.id} className="bg-white/10 rounded-lg p-2 text-sm flex items-center justify-between">
+                <div>
+                  <div className="font-medium">{t.date} · {t.slot}</div>
+                  <div className="text-xs opacity-80">{t.name} · {t.count} ppl · ₹{t.amount.toLocaleString()}</div>
+                </div>
+                <div className="text-xs opacity-70">{t.id}</div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      <TicketPurchase
+        open={open}
+        onClose={() => setOpen(false)}
+        onSuccess={(t) => {
+          setTickets((prev) => [t, ...prev]);
+          toast.success("E‑Darshan ticket booked", { description: `${t.date} ${t.slot} · ${t.count} devotees · ₹${t.amount.toLocaleString()}` });
+        }}
+      />
+    </div>
+  );
 }
 
 export default function Dashboard() {
@@ -164,6 +210,9 @@ export default function Dashboard() {
 
         {/* Right Column 30% */}
         <div className="col-span-10 md:col-span-3 space-y-4">
+          {/* E-Darshan Purchase */}
+          <PurchaseSection />
+
           <div className="bg-white rounded-xl p-4 shadow max-h-[280px] overflow-auto">
             <h3 className="font-semibold text-slate-800 mb-2">Alerts</h3>
             <ul className="space-y-3">
