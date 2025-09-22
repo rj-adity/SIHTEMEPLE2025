@@ -20,6 +20,7 @@ import TicketPurchase, {
 } from "@/components/tickets/TicketPurchase";
 import type { Ticket as TicketType } from "@/components/tickets/TicketPurchase";
 import { toast } from "sonner";
+import { useWebSocket } from "@/hooks/useWebSocket";
 
 function classNames(...c: (string | false | undefined)[]) {
   return c.filter(Boolean).join(" ");
@@ -82,9 +83,25 @@ function PurchaseSection() {
 }
 
 export default function Dashboard() {
+  // WebSocket connection for real-time updates
+  const { connected, lastUpdate, alerts: wsAlerts } = useWebSocket({
+    templeId: 'dwarka',
+    onUpdate: (update) => {
+      setVisitors(update.currentVisitors);
+      setOccupancy(update.occupancyPercent);
+      setQueueLen(update.queueLength);
+      setAvgWait(update.avgWaitTime);
+    },
+    onAlert: (alert) => {
+      toast.error(`${alert.type.toUpperCase()}: ${alert.message}`, {
+        description: new Date(alert.timestamp).toLocaleTimeString()
+      });
+    }
+  });
+
   // Live crowd simulation
-  const [visitors, setVisitors] = useState(36500);
-  const [occupancy, setOccupancy] = useState(72);
+  const [visitors, setVisitors] = useState(lastUpdate?.currentVisitors || 36500);
+  const [occupancy, setOccupancy] = useState(lastUpdate?.occupancyPercent || 72);
   const [crowdData, setCrowdData] = useState<{ t: string; v: number }[]>(
     Array.from({ length: 20 }).map((_, i) => ({
       t: `${i}m`,
@@ -92,47 +109,56 @@ export default function Dashboard() {
     })),
   );
 
+  // Update crowd data chart when visitors change
   useEffect(() => {
-    const id = setInterval(() => {
-      setCrowdData((prev) => {
-        const next = prev.slice(1);
-        const v = Math.max(
-          1000,
-          Math.round(
-            (prev[prev.length - 1]?.v || 32000) + (Math.random() - 0.4) * 2500,
-          ),
-        );
-        next.push({
-          t: `${Number(prev[prev.length - 1]?.t.replace("m", "")) + 3}m`,
-          v,
-        });
-        return next;
+    setCrowdData((prev) => {
+      const next = prev.slice(1);
+      next.push({
+        t: `${Number(prev[prev.length - 1]?.t.replace("m", "")) + 3}m`,
+        v: visitors,
       });
-      setVisitors((v) =>
-        Math.max(1000, Math.round(v + (Math.random() - 0.4) * 2500)),
-      );
-      setOccupancy((o) =>
-        Math.max(5, Math.min(98, Math.round(o + (Math.random() - 0.5) * 5))),
-      );
-    }, 3000);
-    return () => clearInterval(id);
-  }, []);
+      return next;
+    });
+  }, [visitors]);
 
   // Queue stats
-  const [queueLen, setQueueLen] = useState(1250);
-  const [avgWait, setAvgWait] = useState(45);
-  useEffect(() => {
-    const id = setInterval(() => {
-      setQueueLen((q) =>
-        Math.max(0, Math.round(q + (Math.random() - 0.5) * 150)),
-      );
-      setAvgWait((w) => Math.max(5, Math.round(w + (Math.random() - 0.5) * 6)));
-    }, 5000);
-    return () => clearInterval(id);
-  }, []);
+  const [queueLen, setQueueLen] = useState(lastUpdate?.queueLength || 1250);
+  const [avgWait, setAvgWait] = useState(lastUpdate?.avgWaitTime || 45);
 
   // Predictions data (24h)
   const [festival, setFestival] = useState(false);
+  const [mlPredictions, setMlPredictions] = useState<any[]>([]);
+  
+  // Fetch ML predictions
+  useEffect(() => {
+    const fetchPredictions = async () => {
+      try {
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        const dateStr = tomorrow.toISOString().split('T')[0];
+        
+        const response = await fetch('/api/ml/predict', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            templeId: 'dwarka',
+            date: dateStr,
+            festivalMode: festival
+          })
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          setMlPredictions(data.predictions || []);
+        }
+      } catch (error) {
+        console.error('Failed to fetch ML predictions:', error);
+      }
+    };
+    
+    fetchPredictions();
+  }, [festival]);
+  
   const basePrediction = useMemo(
     () =>
       Array.from({ length: 24 }).map((_, h) => {
@@ -146,48 +172,25 @@ export default function Dashboard() {
   );
   const prediction = useMemo(
     () =>
-      basePrediction.map((d) => ({
+      (mlPredictions.length > 0 ? mlPredictions : basePrediction).map((d) => ({
         ...d,
-        value: festival ? Math.round(d.value * 2) : d.value,
+        value: festival ? Math.round((d.visitors || d.value) * 2) : (d.visitors || d.value),
       })),
-    [basePrediction, festival],
+    [basePrediction, mlPredictions, festival],
   );
 
   // Alerts feed
-  const [alerts, setAlerts] = useState<
-    { icon: string; text: string; time: string }[]
-  >([
-    { icon: "⚠️", text: "Medical emergency at East Gate", time: "10:05 AM" },
-    { icon: "🚓", text: "Crowd surge near Entry 3", time: "10:10 AM" },
-  ]);
+  const [alerts, setAlerts] = useState<{ icon: string; text: string; time: string }[]>([]);
+  
+  // Convert WebSocket alerts to display format
   useEffect(() => {
-    const samples = [
-      {
-        icon: "⚠️",
-        text: "Dehydration case near North Corridor",
-        time: new Date().toLocaleTimeString(),
-      },
-      {
-        icon: "🚓",
-        text: "Queue spillover at Ticket Counter",
-        time: new Date().toLocaleTimeString(),
-      },
-      {
-        icon: "🛠️",
-        text: "Barricade fix needed at West Gate",
-        time: new Date().toLocaleTimeString(),
-      },
-    ];
-    const id = setInterval(() => {
-      setAlerts((a) =>
-        [samples[Math.floor(Math.random() * samples.length)], ...a].slice(
-          0,
-          10,
-        ),
-      );
-    }, 8000);
-    return () => clearInterval(id);
-  }, []);
+    const displayAlerts = wsAlerts.map(alert => ({
+      icon: alert.type === 'medical' ? '⚠️' : alert.type === 'crowd' ? '🚓' : alert.type === 'security' ? '🛡️' : '🛠️',
+      text: alert.message,
+      time: new Date(alert.timestamp).toLocaleTimeString()
+    }));
+    setAlerts(displayAlerts);
+  }, [wsAlerts]);
 
   // Parking
   const [parking, setParking] = useState([
@@ -226,7 +229,10 @@ export default function Dashboard() {
           <div className="bg-white/5 rounded-xl p-5 shadow border border-white/10">
             <div className="flex items-center justify-between mb-3">
               <h3 className="font-semibold">Live Crowd</h3>
-              <span className="text-xs opacity-70">last ~60m</span>
+              <div className="flex items-center gap-2">
+                <div className={`w-2 h-2 rounded-full ${connected ? 'bg-green-400' : 'bg-red-400'}`} />
+                <span className="text-xs opacity-70">{connected ? 'Live' : 'Offline'}</span>
+              </div>
             </div>
             <div className="text-3xl md:text-[36px] font-bold leading-none">
               <span className={classNames(occColor)}>

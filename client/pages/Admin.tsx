@@ -8,6 +8,7 @@ import {
   Tooltip as ReTooltip,
   ResponsiveContainer,
 } from "recharts";
+import { useWebSocket } from "@/hooks/useWebSocket";
 
 type StaffType = "Medical" | "Police" | "Volunteer";
 
@@ -30,6 +31,14 @@ const zones = [
 type Zone = (typeof zones)[number];
 
 export default function Admin() {
+  // WebSocket connection for real-time updates
+  const { connected, simulateSurge } = useWebSocket({
+    templeId: 'dwarka',
+    onUpdate: (update) => {
+      console.log('Admin received update:', update);
+    }
+  });
+
   const [available, setAvailable] = useState(staffSeed);
   const [placed, setPlaced] = useState<Record<Zone, typeof staffSeed>>({
     "North Gate": [],
@@ -40,6 +49,39 @@ export default function Admin() {
   const [log, setLog] = useState<string[]>([
     `[${new Date().toLocaleTimeString()}] System ready`,
   ]);
+
+  // ML Predictions state
+  const [mlPredictions, setMlPredictions] = useState<any[]>([]);
+  
+  // Fetch ML predictions
+  useEffect(() => {
+    const fetchPredictions = async () => {
+      try {
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        const dateStr = tomorrow.toISOString().split('T')[0];
+        
+        const response = await fetch('/api/ml/predict', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            templeId: 'dwarka',
+            date: dateStr,
+            festivalMode: holiday
+          })
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          setMlPredictions(data.predictions || []);
+        }
+      } catch (error) {
+        console.error('Failed to fetch ML predictions:', error);
+      }
+    };
+    
+    fetchPredictions();
+  }, [holiday]);
 
   function onDragStart(e: React.DragEvent, id: string) {
     e.dataTransfer.setData("text/plain", id);
@@ -74,9 +116,29 @@ export default function Admin() {
     e.preventDefault();
   }
 
+  // Trigger surge simulation
+  const handleSurgeSimulation = async () => {
+    try {
+      await fetch('/api/ml/simulate/surge/dwarka', { method: 'POST' });
+      simulateSurge(); // Also trigger WebSocket surge
+    } catch (error) {
+      console.error('Failed to trigger surge:', error);
+    }
+  };
+
   // Chart data: 3 days (historical + predicted)
   const [holiday, setHoliday] = useState(false);
   const chart = useMemo(() => {
+    // Use ML predictions if available, otherwise use synthetic data
+    if (mlPredictions.length > 0) {
+      return mlPredictions.map((pred, i) => ({
+        t: `Pred ${String(pred.hour).padStart(2, "0")}:00`,
+        v: pred.visitors,
+        day: 0
+      }));
+    }
+    
+    // Fallback to synthetic data
     const arr: { t: string; v: number; day: number }[] = [];
     for (let d = -2; d <= 0; d++) {
       for (let h = 0; h < 24; h++) {
@@ -93,7 +155,7 @@ export default function Admin() {
       }
     }
     return arr;
-  }, [holiday]);
+  }, [holiday, mlPredictions]);
 
   const maxVisitors = Math.max(
     ...chart.filter((d) => d.day === 0).map((d) => d.v),
@@ -106,6 +168,20 @@ export default function Admin() {
   return (
     <div className="min-h-[calc(100vh-60px)] bg-[hsl(var(--dark-navy))] text-[hsl(var(--cream))]">
       <div className="mx-auto max-w-[1440px] px-6 md:px-10 lg:px-20 py-8 grid md:grid-cols-2 gap-6">
+        {/* Connection Status */}
+        <div className="md:col-span-2 flex items-center justify-between bg-white/5 border border-white/10 rounded-xl p-3">
+          <div className="flex items-center gap-2">
+            <div className={`w-3 h-3 rounded-full ${connected ? 'bg-green-400' : 'bg-red-400'}`} />
+            <span className="text-sm">{connected ? 'Real-time Connected' : 'Offline Mode'}</span>
+          </div>
+          <button
+            onClick={handleSurgeSimulation}
+            className="px-4 py-2 rounded-[12px] bg-[hsl(var(--red-alert))] text-white font-semibold shadow hover:shadow-[0_0_18px_rgba(255,77,77,.6)] transition"
+          >
+            🚨 Simulate Crowd Surge
+          </button>
+        </div>
+
         {/* Left: Staff + Map */}
         <div className="space-y-4">
           <h2 className="font-heading text-2xl text-[hsl(var(--gold))]">

@@ -1,0 +1,504 @@
+{
+  "info": {
+    "name": "Dwarka Smart Pilgrimage System API",
+    "description": "Complete API collection for the Dwarka Temple management system with ML predictions and real-time features",
+    "version": "1.0.0",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080",
+      "type": "string"
+    },
+    {
+      "key": "mlUrl",
+      "value": "http://localhost:8000",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health & Status",
+      "item": [
+        {
+          "name": "Backend Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["health"]
+            }
+          }
+        },
+        {
+          "name": "ML Service Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{mlUrl}}/health",
+              "host": ["{{mlUrl}}"],
+              "path": ["health"]
+            }
+          }
+        },
+        {
+          "name": "Ping API",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/ping",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "ping"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Temples",
+      "item": [
+        {
+          "name": "Get All Temples",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/temples",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "temples"]
+            }
+          }
+        },
+        {
+          "name": "Get Dwarka Temple",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/temples/dwarka",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "temples", "dwarka"]
+            }
+          }
+        },
+        {
+          "name": "Update Temple Status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"currentVisitors\": 45000,\n  \"queueLength\": 1500,\n  \"avgWaitTime\": 55,\n  \"occupancyPercent\": 90\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/temples/dwarka/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "temples", "dwarka", "status"]
+            }
+          }
+        },
+        {
+          "name": "Simulate Crowd Surge",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/temples/dwarka/simulate/surge",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "temples", "dwarka", "simulate", "surge"]
+            }
+          }
+        },
+        {
+          "name": "Get Temple Analytics",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/temples/dwarka/analytics?days=7",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "temples", "dwarka", "analytics"],
+              "query": [
+                {
+                  "key": "days",
+                  "value": "7"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "ML Predictions",
+      "item": [
+        {
+          "name": "Get 24h Predictions",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"templeId\": \"dwarka\",\n  \"date\": \"2025-01-20\",\n  \"festivalMode\": false\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/ml/predict",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "ml", "predict"]
+            }
+          }
+        },
+        {
+          "name": "Get 24h Predictions (Festival Mode)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"templeId\": \"dwarka\",\n  \"date\": \"2025-01-20\",\n  \"festivalMode\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/ml/predict",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "ml", "predict"]
+            }
+          }
+        },
+        {
+          "name": "Get Current Temple Status (ML)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/ml/status/dwarka",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "ml", "status", "dwarka"]
+            }
+          }
+        },
+        {
+          "name": "Direct ML Service - Predict",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"templeId\": \"dwarka\",\n  \"date\": \"2025-01-20\",\n  \"festivalMode\": false\n}"
+            },
+            "url": {
+              "raw": "{{mlUrl}}/predict",
+              "host": ["{{mlUrl}}"],
+              "path": ["predict"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Tickets",
+      "item": [
+        {
+          "name": "Create E-Darshan Ticket",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"templeId\": \"dwarka\",\n  \"name\": \"Rajesh Patel\",\n  \"phone\": \"9876543210\",\n  \"email\": \"rajesh@example.com\",\n  \"date\": \"2025-01-20\",\n  \"slot\": \"06:00–08:00\",\n  \"count\": 4,\n  \"amount\": 400\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/tickets",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "tickets"]
+            }
+          }
+        },
+        {
+          "name": "Get All Tickets",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/tickets",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "tickets"]
+            }
+          }
+        },
+        {
+          "name": "Get Tickets by Temple",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/tickets?templeId=dwarka",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "tickets"],
+              "query": [
+                {
+                  "key": "templeId",
+                  "value": "dwarka"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Tickets by Date",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/tickets?date=2025-01-20",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "tickets"],
+              "query": [
+                {
+                  "key": "date",
+                  "value": "2025-01-20"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Slot Availability",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/tickets/slots/dwarka/2025-01-20",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "tickets", "slots", "dwarka", "2025-01-20"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Alerts",
+      "item": [
+        {
+          "name": "Get All Alerts",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/alerts",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "alerts"]
+            }
+          }
+        },
+        {
+          "name": "Get Unresolved Alerts",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/alerts?resolved=false",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "alerts"],
+              "query": [
+                {
+                  "key": "resolved",
+                  "value": "false"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Create Medical Alert",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"templeId\": \"dwarka\",\n  \"type\": \"medical\",\n  \"message\": \"Medical emergency at East Gate - immediate assistance required\",\n  \"severity\": \"high\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/alerts",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "alerts"]
+            }
+          }
+        },
+        {
+          "name": "Create Crowd Alert",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"templeId\": \"dwarka\",\n  \"type\": \"crowd\",\n  \"message\": \"Crowd surge detected near Entry 3\",\n  \"severity\": \"medium\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/alerts",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "alerts"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Staff Management",
+      "item": [
+        {
+          "name": "Get All Staff",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/staff",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "staff"]
+            }
+          }
+        },
+        {
+          "name": "Get Staff by Temple",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/staff?templeId=dwarka",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "staff"],
+              "query": [
+                {
+                  "key": "templeId",
+                  "value": "dwarka"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update Staff Status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"dispatched\",\n  \"zone\": \"North Gate\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/staff/m1/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "staff", "m1", "status"]
+            }
+          }
+        },
+        {
+          "name": "Dispatch Medical Team",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"staffIds\": [\"m1\", \"m2\"],\n  \"zone\": \"East Gate\",\n  \"type\": \"medical\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/staff/dispatch",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "staff", "dispatch"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "WebSocket Testing",
+      "item": [
+        {
+          "name": "WebSocket Connection Info",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/ping",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "ping"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('WebSocket Connection Info', function () {",
+                  "    console.log('WebSocket URL: ws://localhost:8080/ws?templeId=dwarka');",
+                  "    console.log('Expected message format:');",
+                  "    console.log(JSON.stringify({",
+                  "        type: 'status_update',",
+                  "        templeId: 'dwarka',",
+                  "        timestamp: '2025-01-20T10:00:00Z',",
+                  "        currentVisitors: 36500,",
+                  "        queueLength: 1250,",
+                  "        occupancyPercent: 73,",
+                  "        avgWaitTime: 45,",
+                  "        alerts: []",
+                  "    }, null, 2));",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
