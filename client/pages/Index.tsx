@@ -4,7 +4,7 @@ export default function Index({ lang = "en" as "en" | "gu" }: { lang?: "en" | "g
   const navigate = useNavigate();
   return (
     <div
-      className="relative min-h-[calc(100vh-4rem)]"
+      className="relative min-h-[calc(100vh-60px)]"
       style={{
         background:
           "linear-gradient(to bottom, #0A1D37 0%, rgba(0,74,173,0.9) 80%, #004AAD 100%)",
@@ -27,7 +27,7 @@ export default function Index({ lang = "en" as "en" | "gu" }: { lang?: "en" | "g
           <h1 className="font-heading text-[48px] leading-tight text-[hsl(var(--gold))] drop-shadow-sm">
             {lang === "en"
               ? "Dwarka-Inspired Smart Pilgrimage Management Platform"
-              : "દ્વારકા-પ્રેરિત સ્માર્ટ યાત્રા વ્યવસ્થાપન પ્લેટફોર્મ"}
+              : "દ્��ારકા-પ્રેરિત સ્માર્ટ યાત્રા વ્યવસ્થાપન પ્લેટફોર્મ"}
           </h1>
           <p className="mt-4 text-[20px] text-[hsl(var(--cream))] max-w-3xl mx-auto opacity-95">
             {lang === "en"
