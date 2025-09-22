@@ -14,7 +14,7 @@ import {
   Area,
 } from "recharts";
 import { Progress } from "@/components/ui/progress";
-import { Car, MapPin, TicketPlus } from "lucide-react";
+import { Car, MapPin, Ticket } from "lucide-react";
 import TicketPurchase, { readTickets, Ticket } from "@/components/tickets/TicketPurchase";
 import { toast } from "sonner";
 
