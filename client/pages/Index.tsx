@@ -11,7 +11,7 @@ export default function Index({ lang = "en" as "en" | "gu" }: { lang?: "en" | "g
       }}
     >
       {/* 12-col grid with margins */}
-      <div className="mx-auto max-w-[1440px] px-20 md:px-[80px] py-16 grid grid-cols-12 gap-6 min-h-[calc(100vh-4rem)] place-items-center">
+      <div className="mx-auto max-w-[1440px] px-20 md:px-[80px] py-16 grid grid-cols-12 gap-6 min-h-[calc(100vh-60px)] place-items-center">
         {/* Temple silhouette overlay */}
         <svg
           className="pointer-events-none absolute inset-0 mx-auto my-auto w-[900px] h-[900px] opacity-20 text-[hsl(var(--gold))]"
@@ -27,7 +27,7 @@ export default function Index({ lang = "en" as "en" | "gu" }: { lang?: "en" | "g
           <h1 className="font-heading text-[48px] leading-tight text-[hsl(var(--gold))] drop-shadow-sm">
             {lang === "en"
               ? "Dwarka-Inspired Smart Pilgrimage Management Platform"
-              : "દ્��ારકા-પ્રેરિત સ્માર્ટ યાત્રા વ્યવસ્થાપન પ્લેટફોર્મ"}
+              : "દ્વારકા-પ્રેર���ત સ્માર્ટ યાત્રા વ્યવસ્થાપન પ્લેટફોર્મ"}
           </h1>
           <p className="mt-4 text-[20px] text-[hsl(var(--cream))] max-w-3xl mx-auto opacity-95">
             {lang === "en"
