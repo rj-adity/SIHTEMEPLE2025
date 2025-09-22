@@ -45,7 +45,9 @@ export default function Index({ lang = "en" }: { lang?: "en" | "gu" }) {
               onClick={() => navigate("/dashboard?demo=ml")}
               className="px-6 md:px-8 py-3 rounded-[12px] border border-[hsl(var(--gold))] text-[hsl(var(--cream))] font-semibold hover:bg-[hsl(var(--gold))] hover:text-[hsl(var(--royal))] hover:shadow-[0_0_20px_rgba(255,215,0,0.35)] transform hover:scale-[1.05] transition-all"
             >
-              {lang === "en" ? "Run ML Predictions Demo" : "એમએલ અનુમાન ડેમો ચલાવો"}
+              {lang === "en"
+                ? "Run ML Predictions Demo"
+                : "એમએલ અનુમાન ડેમો ચલાવો"}
             </button>
           </div>
         </div>

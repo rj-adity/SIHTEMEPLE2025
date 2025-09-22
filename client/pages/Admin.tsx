@@ -20,7 +20,12 @@ const staffSeed = [
   { id: "v2", name: "Volunteer B", type: "Volunteer" as StaffType },
 ];
 
-const zones = ["North Gate", "West Gate", "East Gate", "Parking Zone B"] as const;
+const zones = [
+  "North Gate",
+  "West Gate",
+  "East Gate",
+  "Parking Zone B",
+] as const;
 
 type Zone = (typeof zones)[number];
 
@@ -44,7 +49,11 @@ export default function Admin() {
   function onDrop(e: React.DragEvent, zone: Zone) {
     e.preventDefault();
     const id = e.dataTransfer.getData("text/plain");
-    const staff = available.find((s) => s.id === id) || (Object.values(placed).flat().find(s => s.id === id));
+    const staff =
+      available.find((s) => s.id === id) ||
+      Object.values(placed)
+        .flat()
+        .find((s) => s.id === id);
     if (!staff) return;
 
     // Remove from wherever it is
@@ -61,7 +70,9 @@ export default function Admin() {
     ]);
   }
 
-  function allowDrop(e: React.DragEvent) { e.preventDefault(); }
+  function allowDrop(e: React.DragEvent) {
+    e.preventDefault();
+  }
 
   // Chart data: 3 days (historical + predicted)
   const [holiday, setHoliday] = useState(false);
@@ -69,23 +80,37 @@ export default function Admin() {
     const arr: { t: string; v: number; day: number }[] = [];
     for (let d = -2; d <= 0; d++) {
       for (let h = 0; h < 24; h++) {
-        const base = 1500 + 7000 * Math.sin((Math.PI * (h + 6)) / 24) ** 2 + (h > 17 && h < 21 ? 1500 : 0);
+        const base =
+          1500 +
+          7000 * Math.sin((Math.PI * (h + 6)) / 24) ** 2 +
+          (h > 17 && h < 21 ? 1500 : 0);
         const v = Math.round(base * (d === 0 ? (holiday ? 1.5 : 1.2) : 1));
-        arr.push({ t: `${d === 0 ? "Pred" : "Hist"} ${String(h).padStart(2, "0")}:00`, v, day: d });
+        arr.push({
+          t: `${d === 0 ? "Pred" : "Hist"} ${String(h).padStart(2, "0")}:00`,
+          v,
+          day: d,
+        });
       }
     }
     return arr;
   }, [holiday]);
 
-  const maxVisitors = Math.max(...chart.filter(d => d.day === 0).map(d => d.v));
-  const peakHour = chart.filter(d => d.day === 0).reduce((a, b) => (a.v > b.v ? a : b)).t.split(" ")[1];
+  const maxVisitors = Math.max(
+    ...chart.filter((d) => d.day === 0).map((d) => d.v),
+  );
+  const peakHour = chart
+    .filter((d) => d.day === 0)
+    .reduce((a, b) => (a.v > b.v ? a : b))
+    .t.split(" ")[1];
 
   return (
     <div className="min-h-[calc(100vh-60px)] bg-[hsl(var(--dark-navy))] text-[hsl(var(--cream))]">
       <div className="mx-auto max-w-[1440px] px-6 md:px-10 lg:px-20 py-8 grid md:grid-cols-2 gap-6">
         {/* Left: Staff + Map */}
         <div className="space-y-4">
-          <h2 className="font-heading text-2xl text-[hsl(var(--gold))]">Staff Management + Map</h2>
+          <h2 className="font-heading text-2xl text-[hsl(var(--gold))]">
+            Staff Management + Map
+          </h2>
 
           {/* Available staff */}
           <div className="bg-white/5 border border-white/10 rounded-xl p-4">
@@ -101,8 +126,8 @@ export default function Admin() {
                     (s.type === "Medical"
                       ? "bg-[hsl(var(--red-alert))] text-white"
                       : s.type === "Police"
-                      ? "bg-[hsl(var(--royal))] text-white"
-                      : "bg-white text-slate-800")
+                        ? "bg-[hsl(var(--royal))] text-white"
+                        : "bg-white text-slate-800")
                   }
                   title={s.type}
                 >
@@ -116,20 +141,74 @@ export default function Admin() {
           <div className="bg-white/5 border border-white/10 rounded-xl p-4">
             <h3 className="font-semibold mb-3">Temple Campus Map</h3>
             <div className="relative h-72 bg-[rgba(255,255,255,.04)] rounded-lg overflow-hidden">
-              <svg className="absolute inset-0 w-full h-full opacity-40" viewBox="0 0 600 300">
-                <rect x="40" y="40" width="520" height="220" fill="none" stroke="white" strokeOpacity="0.2" />
-                <circle cx="300" cy="150" r="60" fill="none" stroke="white" strokeOpacity="0.25" />
-                <rect x="60" y="60" width="120" height="80" fill="none" stroke="white" strokeOpacity="0.2" />
-                <rect x="420" y="60" width="120" height="80" fill="none" stroke="white" strokeOpacity="0.2" />
-                <rect x="240" y="200" width="120" height="40" fill="none" stroke="white" strokeOpacity="0.2" />
+              <svg
+                className="absolute inset-0 w-full h-full opacity-40"
+                viewBox="0 0 600 300"
+              >
+                <rect
+                  x="40"
+                  y="40"
+                  width="520"
+                  height="220"
+                  fill="none"
+                  stroke="white"
+                  strokeOpacity="0.2"
+                />
+                <circle
+                  cx="300"
+                  cy="150"
+                  r="60"
+                  fill="none"
+                  stroke="white"
+                  strokeOpacity="0.25"
+                />
+                <rect
+                  x="60"
+                  y="60"
+                  width="120"
+                  height="80"
+                  fill="none"
+                  stroke="white"
+                  strokeOpacity="0.2"
+                />
+                <rect
+                  x="420"
+                  y="60"
+                  width="120"
+                  height="80"
+                  fill="none"
+                  stroke="white"
+                  strokeOpacity="0.2"
+                />
+                <rect
+                  x="240"
+                  y="200"
+                  width="120"
+                  height="40"
+                  fill="none"
+                  stroke="white"
+                  strokeOpacity="0.2"
+                />
               </svg>
               <div className="absolute inset-0 grid grid-cols-2 grid-rows-2 gap-4 p-4">
                 {zones.map((z) => (
-                  <div key={z} onDrop={(e) => onDrop(e, z)} onDragOver={allowDrop} className="rounded-lg border border-white/20 bg-black/20 backdrop-blur-sm p-3">
+                  <div
+                    key={z}
+                    onDrop={(e) => onDrop(e, z)}
+                    onDragOver={allowDrop}
+                    className="rounded-lg border border-white/20 bg-black/20 backdrop-blur-sm p-3"
+                  >
                     <div className="font-semibold text-sm mb-2">{z}</div>
                     <div className="flex flex-wrap gap-2 min-h-[28px]">
                       {placed[z].map((s) => (
-                        <span key={s.id} draggable onDragStart={(e) => onDragStart(e, s.id)} className="px-2 py-1 rounded-md text-xs bg-white/80 text-slate-800 shadow">{s.name}</span>
+                        <span
+                          key={s.id}
+                          draggable
+                          onDragStart={(e) => onDragStart(e, s.id)}
+                          className="px-2 py-1 rounded-md text-xs bg-white/80 text-slate-800 shadow"
+                        >
+                          {s.name}
+                        </span>
                       ))}
                     </div>
                   </div>
@@ -151,29 +230,65 @@ export default function Admin() {
 
         {/* Right: ML Prediction Panel */}
         <div className="relative">
-          <h2 className="font-heading text-2xl text-[hsl(var(--gold))]">ML Prediction Panel</h2>
+          <h2 className="font-heading text-2xl text-[hsl(var(--gold))]">
+            ML Prediction Panel
+          </h2>
           <div className="bg-white/5 border border-white/10 rounded-xl p-4 mt-4">
             <div className="flex items-center justify-between">
               <div>
-                <div className="text-sm opacity-80">3-day inflow (historical + predicted)</div>
+                <div className="text-sm opacity-80">
+                  3-day inflow (historical + predicted)
+                </div>
                 <label className="flex items-center gap-2 text-sm mt-1">
-                  <input type="checkbox" checked={holiday} onChange={(e) => setHoliday(e.target.checked)} />
+                  <input
+                    type="checkbox"
+                    checked={holiday}
+                    onChange={(e) => setHoliday(e.target.checked)}
+                  />
                   <span>Holiday Surge Mode ( +50% uplift )</span>
                 </label>
               </div>
               <div className="text-right space-y-1">
-                <div className="bg-white/10 rounded-lg px-3 py-2 text-sm">Tomorrow’s Peak Hour: <span className="font-semibold">{peakHour}</span></div>
-                <div className="bg-white/10 rounded-lg px-3 py-2 text-sm">Expected Max Visitors: <span className="font-semibold">{maxVisitors.toLocaleString()}</span></div>
+                <div className="bg-white/10 rounded-lg px-3 py-2 text-sm">
+                  Tomorrow’s Peak Hour:{" "}
+                  <span className="font-semibold">{peakHour}</span>
+                </div>
+                <div className="bg-white/10 rounded-lg px-3 py-2 text-sm">
+                  Expected Max Visitors:{" "}
+                  <span className="font-semibold">
+                    {maxVisitors.toLocaleString()}
+                  </span>
+                </div>
               </div>
             </div>
             <div className="h-80 mt-4">
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={chart}>
-                  <CartesianGrid stroke="rgba(255,255,255,0.08)" vertical={false} />
-                  <XAxis dataKey="t" stroke="#FFFDF7AA" tick={{ fontSize: 11 }} hide />
+                  <CartesianGrid
+                    stroke="rgba(255,255,255,0.08)"
+                    vertical={false}
+                  />
+                  <XAxis
+                    dataKey="t"
+                    stroke="#FFFDF7AA"
+                    tick={{ fontSize: 11 }}
+                    hide
+                  />
                   <YAxis stroke="#FFFDF7AA" tick={{ fontSize: 12 }} />
-                  <ReTooltip contentStyle={{ background: "#0A1D37", border: "1px solid rgba(255,255,255,0.15)", color: "#FFFDF7" }} />
-                  <Area type="monotone" dataKey="v" stroke="#FFD700" fill="#FFD70022" strokeWidth={2} />
+                  <ReTooltip
+                    contentStyle={{
+                      background: "#0A1D37",
+                      border: "1px solid rgba(255,255,255,0.15)",
+                      color: "#FFFDF7",
+                    }}
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="v"
+                    stroke="#FFD700"
+                    fill="#FFD70022"
+                    strokeWidth={2}
+                  />
                 </AreaChart>
               </ResponsiveContainer>
             </div>
