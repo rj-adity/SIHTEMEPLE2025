@@ -96,7 +96,7 @@ export default function Dashboard() {
   const occColor = occupancy < 60 ? "text-[hsl(var(--green-safe))]" : occupancy <= 80 ? "text-amber-400" : "text-[hsl(var(--red-alert))]";
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] bg-[hsl(var(--dark-navy))] text-[hsl(var(--cream))]">
+    <div className="min-h-[calc(100vh-60px)] bg-[hsl(var(--dark-navy))] text-[hsl(var(--cream))]">
       <div className="mx-auto max-w-[1440px] px-6 md:px-10 lg:px-20 py-8 grid grid-cols-10 gap-6">
         {/* Left Column 30% */}
         <div className="col-span-10 md:col-span-3 space-y-6">
