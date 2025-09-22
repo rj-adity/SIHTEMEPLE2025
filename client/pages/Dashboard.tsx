@@ -152,7 +152,7 @@ export default function Dashboard() {
                   <ReTooltip formatter={(v: any, _n: any, p: any) => [v, `Hour: ${String(p.payload.hour).padStart(2, "0")}:00 – Predicted Visitors`]} contentStyle={{ background: "#0A1D37", border: "1px solid rgba(255,255,255,0.15)", color: "#FFFDF7" }} />
                   <Bar dataKey="value" fill="#FFD700">
                     {prediction.map((entry, index) => (
-                      <cell key={`c-${index}`} fill={entry.value > 10000 ? "#FF4D4D" : "#FFD700"} />
+                      <Cell key={`c-${index}`} fill={entry.value > 10000 ? "#FF4D4D" : "#FFD700"} />
                     ))}
                   </Bar>
                 </BarChart>
