@@ -14,8 +14,9 @@ import {
   Area,
 } from "recharts";
 import { Progress } from "@/components/ui/progress";
-import { Car, MapPin, Ticket } from "lucide-react";
-import TicketPurchase, { readTickets, Ticket } from "@/components/tickets/TicketPurchase";
+import { Car, MapPin, Ticket as TicketIcon } from "lucide-react";
+import TicketPurchase, { readTickets } from "@/components/tickets/TicketPurchase";
+import type { Ticket as TicketType } from "@/components/tickets/TicketPurchase";
 import { toast } from "sonner";
 
 function classNames(...c: (string | false | undefined)[]) {
@@ -24,7 +25,7 @@ function classNames(...c: (string | false | undefined)[]) {
 
 function PurchaseSection() {
   const [open, setOpen] = useState(false);
-  const [tickets, setTickets] = useState<Ticket[]>(readTickets());
+  const [tickets, setTickets] = useState<TicketType[]>(readTickets());
   return (
     <div className="bg-white/5 rounded-xl p-4 shadow border border-white/10">
       <div className="flex items-center justify-between">
@@ -33,7 +34,7 @@ function PurchaseSection() {
           <div className="text-xs opacity-80 -mt-0.5">ઈ‑દર્શન ટિકિટ</div>
         </div>
         <button onClick={() => setOpen(true)} className="px-3 py-2 rounded-[12px] bg-[hsl(var(--gold))] text-[hsl(var(--royal))] font-semibold shadow hover:shadow-[0_0_16px_rgba(255,215,0,.45)] flex items-center gap-2">
-          <Ticket className="h-4 w-4" /> Purchase
+          <TicketIcon className="h-4 w-4" /> Purchase
         </button>
       </div>
 
