@@ -272,3 +272,5 @@ class TempleWebSocketManager {
 }
 
 export { TempleWebSocketManager, type TempleUpdate, type Alert };
+
+export { TempleWebSocketManager }

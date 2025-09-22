@@ -251,3 +251,5 @@ export {
   type Staff, 
   type Parking 
 };
+
+export { DatabaseManager }
