@@ -33,7 +33,7 @@ function PurchaseSection() {
           <div className="text-xs opacity-80 -mt-0.5">ઈ‑દર્શન ટિકિટ</div>
         </div>
         <button onClick={() => setOpen(true)} className="px-3 py-2 rounded-[12px] bg-[hsl(var(--gold))] text-[hsl(var(--royal))] font-semibold shadow hover:shadow-[0_0_16px_rgba(255,215,0,.45)] flex items-center gap-2">
-          <TicketPlus className="h-4 w-4" /> Purchase
+          <Ticket className="h-4 w-4" /> Purchase
         </button>
       </div>
 
